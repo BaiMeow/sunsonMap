@@ -22,20 +22,14 @@ body,
     position: absolute;
 }
 
-#author {
-    z-index: -10;
-    position: absolute;
-    border-radius: 5px;
-    left: 8px;
-    top: 8px;
+.el-notification {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     background-color: rgba(255, 255, 255, 0.2);
     box-shadow: 0px 10px 30px rgba(0, 0, 0, .18), 0px 6px 10px rgba(0, 0, 0, .22);
     border-style: hidden;
-    border-left-width: 10px;
 }
 
-#author-hr {
-    width: 95%;
+#switch-card {
+    width: fit-content;
 }

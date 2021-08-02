@@ -4,15 +4,17 @@ import (
 	"bufio"
 	"encoding/csv"
 	"encoding/json"
-	"flag"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 var (
-	key, path string
+	key string
 )
 
 type School struct {
@@ -22,10 +24,39 @@ type School struct {
 	Students []string   `json:"students"`
 }
 
+type Conf struct {
+	Key   string `json:"key"`
+	Index []struct {
+		Class int    `json:"class"`
+		Path  string `json:"path"`
+	} `json:"index"`
+}
+
 func main() {
-	flag.StringVar(&key, "key", "", "高德地图api的key")
-	flag.StringVar(&path, "path", "", "数据路径")
-	flag.Parse()
+	file, err := ioutil.ReadFile("./conf.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+	var conf Conf
+	if err := json.Unmarshal(file, &conf); err != nil {
+		log.Fatal(err)
+	}
+	key = conf.Key
+	index := make(map[int]string)
+	for _, v := range conf.Index {
+		index[v.Class] = fmt.Sprintf("/data/data%d.json", v.Class)
+		gen(v.Path, v.Class)
+	}
+	indexBytes, err := json.Marshal(&index)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := ioutil.WriteFile(".\\public\\data\\index.json", indexBytes, 0666); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func gen(path string, class int) {
 	if key == "" || path == "" {
 		log.Fatal("missing key or path")
 	}
@@ -37,10 +68,13 @@ func main() {
 	var data = make(map[string]*School)
 	//忽略标题行
 	reader.Read()
-	for i := 1; i <= 57; i++ {
+	for {
 		line, err := reader.Read()
 		//忽略未知高校的学生
 		if err != nil {
+			if err == io.EOF {
+				break
+			}
 			panic(err)
 		}
 		if line[2] == "" {
@@ -57,14 +91,33 @@ func main() {
 		}
 		data[line[2]].Students = append(data[line[2]].Students, line[1])
 	}
+	result := make(chan bool, 500)
+	var num int
 	for _, v := range data {
-		v.FillGeocode()
+		num++
+		go v.FillGeocode(result)
+		time.Sleep(time.Millisecond * 50)
 	}
+	t := time.NewTimer(time.Second * 2)
+	for num > 0 {
+		select {
+		case <-result:
+			num--
+			t.Reset(time.Second * 2)
+		case <-t.C:
+			log.Fatal("time out")
+		}
+	}
+	t.Stop()
 	SchoolsJsonBytes, err := json.Marshal(data)
 	if err != nil {
 		log.Fatal("json fail:", err)
 	}
-	os.WriteFile("public/data/data.json", SchoolsJsonBytes, 0666)
+	savePath := fmt.Sprintf("public/data/data%d.json", class)
+	if err := os.WriteFile(savePath, SchoolsJsonBytes, 0666); err != nil {
+		log.Fatal(err)
+	}
+	log.Println(class, "班完成")
 }
 
 type amapResp struct {
@@ -74,8 +127,8 @@ type amapResp struct {
 	} `json:"pois"`
 }
 
-func (s *School) FillGeocode() {
-	resp, err := http.Get(fmt.Sprintf("https://restapi.amap.com/v3/place/text?key=%s&keywords=%s&city=%s", key, s.Address, s.City))
+func (s *School) FillGeocode(result chan bool) {
+	resp, err := http.Get(fmt.Sprintf("https://restapi.amap.com/v3/place/text?key=%s&keywords=%s", key, s.Address))
 	if err != nil {
 		log.Fatal("http fail", s.Address, err)
 	}
@@ -91,4 +144,5 @@ func (s *School) FillGeocode() {
 		log.Fatal(err)
 	}
 	s.Pos = [2]float64{longitude, latitude}
+	result <- true
 }

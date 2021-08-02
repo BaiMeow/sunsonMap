@@ -2,24 +2,36 @@
 <html>
 
 <head>
-    <title>书生21届9班去向</title>
-    <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=fd096d9d048c3a1ba91c234986c43a18"></script>
-    <link rel="stylesheet" href="/css/map-page.css">
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <title>书生21届毕业去向</title>
+    <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=fd096d9d048c3a1ba91c234986c43a18"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="https://unpkg.com/element-plus/lib/index.full.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="/css/main.css">
 </head>
 
 <body>
     <div id="container"></div>
-    <div id="author">
-        <h4>&nbsp;台州市书生中学21届9班毕业去向&nbsp;
-            <hr id="author-hr">
-        </h4>
-        <p>&nbsp;技术支持：柏喵Sakura</p>
-        <p>&nbsp;数据统计：特别贫穷的小C，鳝</p>
+    <div id="app">
+        <el-card id="switch-card">
+            <el-dropdown>
+                <span class="el-dropdown-link">
+                    {{ chosenClass }}班<i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <template #dropdown>
+                    <el-dropdown-menu>
+                        <el-dropdown-item v-for="(class1,i) in classIndex" @click="chooseClass(i)">
+                            {{ i }}班
+                        </el-dropdown-item>
+                    </el-dropdown-menu>
+                </template>
+            </el-dropdown>
+        </el-card>
     </div>
 </body>
-<script type="text/javascript" src="/js/load.js"></script>
+<script type=" text/javascript " src=" /js/main.js "></script>
 
 </html>
