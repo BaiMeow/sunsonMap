@@ -7,7 +7,7 @@ indexreq.onreadystatechange = function() {
         classIndex = JSON.parse(this.responseText);
     };
 };
-indexreq.open("GET", "/data/index.json", false)
+indexreq.open("GET", "./data/index.json", false)
 indexreq.send()
 var map = new AMap.Map('container', {
     resizeEnable: true,
@@ -51,7 +51,7 @@ function loadClass(classID) {
             data = JSON.parse(this.responseText);
         };
     };
-    datareq.open("GET", "/data/data" + classID + ".json", false);
+    datareq.open("GET", "./data/data" + classID + ".json", false);
     datareq.send();
     for (school in data) {
         studensStr = school + ":</br>";
