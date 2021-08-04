@@ -1,10 +1,10 @@
 # 书生21届9班去向地图
 
-main.go将收集表中的数据从csv格式转为json格式，并标注学校经纬度，生成data.json
+main.go将收集表中的数据从csv格式转为json格式，并标注学校经纬度，生成data.json和index.json
 
-data.json保存在public/data文件夹内，为了保护隐私没有上传到github
+data.json和index.json保存在public/data文件夹内，为了保护隐私没有上传到github
 
-public文件夹是静态网页文件，通过获取data.json来进行地图标注
+public文件夹是静态网页文件，通过获取index.json和data.json来进行地图标注
 
 上述csv文件遵循以下格式
 
@@ -12,4 +12,18 @@ public文件夹是静态网页文件，通过获取data.json来进行地图标�
 |--|--|--|--|--|--|
 |1|李华|家里蹲大学|浙江省|温州市||
 
-over
+> 事实上学号,高校省市已经不再使用，完全可以留空，如果定位不准确请直接填写详细地址
+
+## 使用
+
+如果单纯是使用的话，就请你不要fork了，直接下载
+
+先准备好数据，至少要确保第二列是学生姓名，第三列是学校名称，并且剩余的1，4，5，6列的标题请不要留空
+
+然后按照conf.json的要求填写conf.json,已经写了注释，就不再赘述了
+
+接下来要打开index.json改一下网页标题
+
+最后打开main.js改一下通知的标题和信息
+
+如果你还想修改默认班级，把defaultClass改成你的默认班级

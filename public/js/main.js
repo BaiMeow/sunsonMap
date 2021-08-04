@@ -9,6 +9,7 @@ indexreq.onreadystatechange = function() {
 };
 indexreq.open("GET", "./data/index.json", false)
 indexreq.send()
+const defaultClass = Object.keys(classIndex)[0];
 var map = new AMap.Map('container', {
     resizeEnable: true,
     zoom: 4,
@@ -22,7 +23,7 @@ ElementPlus.ElNotification({
 var Main = {
     data() {
         return {
-            chosenClass: 9,
+            chosenClass: defaultClass,
             classIndex: classIndex,
         }
     },
@@ -42,7 +43,7 @@ var Main = {
 const app = Vue.createApp(Main);
 app.use(ElementPlus);
 app.mount('#app');
-loadClass(9)
+loadClass(defaultClass)
 
 function loadClass(classID) {
     map.clearMap();
