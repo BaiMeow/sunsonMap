@@ -1,0 +1,7 @@
+{
+    "key":"请前往 https://lbs.amap.com/dev/key 新建应用并添加key，选择Web服务，将得到的32位key填入此处。",
+    "index":[
+        {"class":1,"path":"./datas-1.csv"},
+        {"class":2,"path":"./请预先将csv文件转换为utf-8格式.csv"}
+    ]
+}
